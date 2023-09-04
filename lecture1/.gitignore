@@ -1,0 +1,5 @@
+*.o
+*.a
+hello_world
+main
+my_prog
