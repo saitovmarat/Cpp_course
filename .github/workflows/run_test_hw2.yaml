@@ -1,0 +1,38 @@
+name: Test task2
+
+on:
+  push:
+    paths:
+     - ".github/workflows/run_test_hw2.yaml"
+     - "tasks/task2/matrix.cpp"
+     - "!tasks/task2/tests/**"
+  pull_request:
+    paths:
+     - ".github/workflows/run_test_hw2.yaml"
+     - "tasks/task2/matrix.cpp"
+     - "!tasks/task2/tests/**"
+
+
+env:
+  BUILD_TYPE: Release
+  WORK_DIR: tasks/task2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/${{env.WORK_DIR}}/
+      run: cmake -B ./build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      working-directory: ${{github.workspace}}/${{env.WORK_DIR}}/
+      run: cmake --build ./build --target tests_run --config ${{env.BUILD_TYPE}}
+
+    - name: Tests
+      working-directory: ${{github.workspace}}/${{env.WORK_DIR}}/
+      run: build/tests_run
+      shell: bash
