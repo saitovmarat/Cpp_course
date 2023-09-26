@@ -133,6 +133,7 @@ TEST(CustomList, Check_find) {
 
         for (int i=0; i<10; i++) {
             const Node* node = l.find(i);
+            EXPECT_NE(node, nullptr);
             EXPECT_EQ(node->val, i);
             if (i == 9) {
                 EXPECT_EQ(node->next, nullptr);
@@ -148,18 +149,23 @@ TEST(CustomList, Check_find) {
         l.push_back(1);
 
         Node* node = l.find(1);
+        EXPECT_NE(node, nullptr);
         EXPECT_EQ(node->val, 1);
         EXPECT_EQ(node, l[1]);
 
         // size 11-1
         l.remove_front();
         node = l.find(1);
+
+        EXPECT_NE(node, nullptr);
         EXPECT_EQ(node->val, 1);
         EXPECT_EQ(node, l[0]);
 
         // size 10-1
         l.remove_front();
         node = l.find(1);
+
+        EXPECT_NE(node, nullptr);
         EXPECT_EQ(node->val, 1);
         EXPECT_EQ(node, l[8]);
     }
@@ -361,6 +367,7 @@ TEST(CustomList, Check_remove) {
 
         Node* node = l.find(2);
 
+        EXPECT_NE(node, nullptr);
         ASSERT_TRUE(l.remove(node));
         ASSERT_EQ(l[0]->val, 1);
         ASSERT_EQ(l[1]->val, 3); 
