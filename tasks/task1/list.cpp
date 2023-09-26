@@ -1,31 +1,31 @@
 #include "list.h"
+#include <iostream>
 
 
 List::List()
 {
-    List();
+    first = nullptr;
+    last = nullptr;
 }
 
 
 bool
 List::is_empty()
 {
-    if(first == nullptr)
-        return true;
-    return false;  
+    return (first == nullptr);
+
 }
 
 
 void
 List::clear()
 {
+    if(is_empty())
+        return;
     while(first != nullptr){
-        Node* temp = first;
-        first = first->next;
-        delete temp;
+        remove_back();
     }
 }
-
 
 
 void
@@ -33,6 +33,8 @@ List::push_front(int _val)
 {
     Node* newNode = new Node(_val);
     newNode->next = first;
+    last = first;
+    first = newNode;
 }
 
 
@@ -40,21 +42,31 @@ void
 List::push_back(int _val)
 {
     Node* newNode = new Node(_val);
-    last->next = newNode;
-    newNode->next = nullptr;
+    if(is_empty()){
+        first = newNode;
+        last = first;
+        return;
+    }
+    /*Ошибка*/last->next = newNode;
+    first = last;
+    last = newNode;
 }
 
 
 Node*
 List::find(int _val)
 {
-    Node* temp = first;
-    while(temp->val != _val || temp != nullptr){
-        if(temp->val == _val)
-            return temp;
-        temp = temp->next;
+    if(is_empty())
+        return nullptr;
+
+    Node* current = first;
+    while(current != nullptr){
+        if(current->val == _val){
+            return current;
+        }
+        current = current->next;
     }
-    return nullptr;
+    return current;
 }
 
 
@@ -74,12 +86,12 @@ List::remove_back()
 {
     if (is_empty())
         return;
-    if (first->next == nullptr){
-        delete first;
+    Node* temp = first;
+    if(first->next == nullptr){
         first = nullptr;
+        last = first;
         return;
     }
-    Node* temp = first;
     while (temp->next->next != nullptr)
         temp = temp->next;
     delete temp->next;
@@ -90,8 +102,9 @@ List::remove_back()
 bool
 List::remove(const Node* _node)
 {
-    if(first == nullptr || _node == nullptr)
+    if(is_empty() || _node == nullptr || find(_node->val) == nullptr)
         return false;
+        
     if(_node == first){
         remove_front();
         return true;
@@ -100,12 +113,10 @@ List::remove(const Node* _node)
         remove_back();
         return true;
     } 
-    if(find(_node->val) == nullptr)
-        return false;
-    Node* temp = first->next;
+    Node* temp = first;
     while(temp->next != _node)
         temp = temp->next;
     temp->next = _node->next;
-    delete _node;
+    delete temp;
     return true;
 }
