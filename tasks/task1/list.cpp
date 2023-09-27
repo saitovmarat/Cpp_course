@@ -75,8 +75,13 @@ List::find(int _val)
 void
 List::remove_front()
 {
-    if (is_empty())
+    if (is_empty())  //Случай когда в списке 0 элементов
         return;
+    if(first == last){ //Случай когда в списке 1 элемент
+        first = nullptr;
+        last = nullptr;
+        return;
+    }
     Node* temp = first;
     first = first->next;
     delete temp;
@@ -106,7 +111,7 @@ List::remove_back()
 bool
 List::remove(const Node* _node)
 {
-    if(is_empty() || _node == nullptr || find(_node->val) == nullptr) //Случай когда 0 элементов, перадаваемый элемент nullptr или отсутствует в списке
+    if(is_empty() || _node == nullptr || find(_node->val) == nullptr) //Случаи когда 0 элементов в списке, перадаваемый элемент = nullptr или отсутствует в списке
         return false;
         
     if(_node == first){ //Случай когда передаваемый элемент стоит в начале списка
@@ -118,9 +123,12 @@ List::remove(const Node* _node)
         return true;
     } 
     Node* temp = first;
+    Node* foundNode = temp->next;
     while(temp->next != _node)
         temp = temp->next;
+        
     temp->next = _node->next;
-    delete temp->next;
+
+    delete foundNode;
     return true;
 }
