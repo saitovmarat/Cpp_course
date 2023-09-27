@@ -13,7 +13,6 @@ bool
 List::is_empty()
 {
     return (first == nullptr);
-
 }
 
 
@@ -47,8 +46,7 @@ List::push_back(int _val)
         last = first;
         return;
     }
-    /*Ошибка*/last->next = newNode;
-    first = last;
+    last->next = newNode;
     last = newNode;
 }
 
@@ -84,32 +82,34 @@ List::remove_front()
 void
 List::remove_back()
 {
-    if (is_empty())
+    if (is_empty()) //Случай когда в списке 0 элементов
         return;
-    Node* temp = first;
-    if(first->next == nullptr){
+    if(first == last){ //Случай когда в списке 1 элемент
         first = nullptr;
-        last = first;
+        last = nullptr;
         return;
     }
-    while (temp->next->next != nullptr)
-        temp = temp->next;
-    delete temp->next;
-    temp->next = nullptr;
+    Node* current = first; 
+    //Случай когда в списке > 1 элемента
+    while (current->next->next != nullptr) //Идем до предпоследнего элемента, чтобы получить ссылку на последний элемент
+        current = current->next;
+
+    current->next = nullptr;
+    last = current;
 }
 
 
 bool
 List::remove(const Node* _node)
 {
-    if(is_empty() || _node == nullptr || find(_node->val) == nullptr)
+    if(is_empty() || _node == nullptr || find(_node->val) == nullptr) //Случай когда 0 элементов, перадаваемый элемент nullptr или отсутствует в списке
         return false;
         
-    if(_node == first){
+    if(_node == first){ //Случай когда передаваемый элемент стоит в начале списка
         remove_front();
         return true;
     }
-    if(_node == last){
+    if(_node == last){ //Случай когда передаваемый элемент стоит в конце списка
         remove_back();
         return true;
     } 
@@ -117,6 +117,6 @@ List::remove(const Node* _node)
     while(temp->next != _node)
         temp = temp->next;
     temp->next = _node->next;
-    delete temp;
+    delete temp->next;
     return true;
 }
