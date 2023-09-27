@@ -31,8 +31,12 @@ void
 List::push_front(int _val)
 {
     Node* newNode = new Node(_val);
+    if(is_empty()){
+        first = newNode;
+        last = newNode;
+        return;
+    }
     newNode->next = first;
-    last = first;
     first = newNode;
 }
 
@@ -43,7 +47,7 @@ List::push_back(int _val)
     Node* newNode = new Node(_val);
     if(is_empty()){
         first = newNode;
-        last = first;
+        last = newNode;
         return;
     }
     last->next = newNode;
