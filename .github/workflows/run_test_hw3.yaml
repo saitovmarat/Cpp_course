@@ -1,20 +1,20 @@
-name: Test task2
+name: Test task3
 
 on:
   push:
     paths:
-     - ".github/workflows/run_test_hw2.yaml"
-     - "tasks/task2/matrix.cpp"
-     - "!tasks/task2/tests/**"
+     - ".github/workflows/run_test_hw3.yaml"
+     - "tasks/task3/bin_search.hpp"
+     - "!tasks/task3/tests/**"
   pull_request:
     paths:
-     - ".github/workflows/run_test_hw2.yaml"
-     - "tasks/task2/matrix.cpp"
-     - "!tasks/task2/tests/**"
+     - ".github/workflows/run_test_hw3.yaml"
+     - "tasks/task3/bin_search.hpp"
+     - "!tasks/task3/tests/**"
 
 
 env:
-  TASK_DIR: ${{github.workspace}}/tasks/task2/
+  TASK_DIR: ${{github.workspace}}/tasks/task3/
 
 jobs:
   build:
