@@ -6,8 +6,8 @@ config:
 build: config
 	cmake --build ./build --target all
 
-test: build build/tests_run
-	build/tests_run
+test: build build/fixed_size_stack
+	build/fixed_size_stack
 
 clean:
 	rm -rf build/
