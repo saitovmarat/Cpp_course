@@ -1,12 +1,13 @@
-all: build
+.PHONY: test build
 
-rebuild: clean build
+config:
+	cmake -B ./build -DCMAKE_BUILD_TYPE=debug
 
-build: stackList.o
-	g++ -Wall -Wextra -Werror stackList.o main.cpp -o main
+build: config
+	cmake --build ./build --target all
 
-stackList.o:
-	g++ -c -Wall -Wextra -Werror stackList.cpp
+test: build build/tests_run
+	build/tests_run
 
 clean:
-	rm -rf *.o main
+	rm -rf build/
