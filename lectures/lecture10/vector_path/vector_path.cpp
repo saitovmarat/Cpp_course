@@ -1,25 +1,32 @@
-/*
-Напишите функцию PrintVectorPart, принимающую вектор целых чисел numbers,
-	выполняющую поиск первого отрицательного числа в нём и выводящую в стандартный вывод
-	все числа, расположенные левее найденного, отсортированные в обратном порядке.
-Если вектор не содержит отрицательных чисел,
-	выведите все числа в обратном порядке без сортировки.
-*/
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
 
 
-template </* тут ещё что-то нужно написать :) */>
-// std::vector<T>& numbers - или так если вы сделаете иную реализацию
+template <typename T>
 void PrintVectorPart(std::vector<T>&& numbers) {
+	std::vector<int>::iterator it = numbers.begin();
+	std::vector<T> result;
+	bool flag = false;
+	while(it!= numbers.end()){
+		if(*it < 0){
+			flag = true;
+			break;
+		}
+		result.push_back(*it);
+		it++;
+	}
+	if (flag) std::sort(result.begin(), result.end());
 
+	std::vector<int>::reverse_iterator revIT = result.rbegin();
+	for(;revIT != result.rend(); revIT++){
+		std::cout << *revIT << " ";
+	}
 }
-
 int main()
 {
-	PrintVectorPart<int>({ 6, 1, 8, -5, 4 });  //  1 6 8
+	PrintVectorPart<int>({ 6, 1, 8, -5, 4 });  //  1 6 8 (Ответ неправильный. По заданию сказано вывести массив 
+                                               //отсортированный в обратном порядке поэтому правильный ответ 8 6 1)
 	std::cout << std::endl;
 	PrintVectorPart<int>({ -6, 1, 8, -5, 4 });  //  ничего не выведется
 	std::cout << std::endl;
