@@ -9,7 +9,7 @@ public:
     static const size_t empty_vector_size_ = 8;
 public:
     using iterator = Iterator<T>;
-    using value_type = /* ? */;
+    using value_type = /*  ? */;
     using pointer = /* ? */;
     using reference = /* ? */;
     using size_type = /* ? */;
