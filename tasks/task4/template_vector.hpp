@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "template_iterator.hpp"
 
 template <class T>
@@ -8,9 +9,10 @@ public:
     static const size_t reserve_miltiply_ = 2;
     static const size_t empty_vector_size_ = 8;
 public:
-    using iterator = T*;
+
+    using iterator = Iterator<T>;
     using value_type = T;
-    using pointer = std::allocator_traits<alloca>::pointer;
+    using pointer = T*; 
     using reference = value_type&;
     using size_type = size_t;
 
@@ -57,9 +59,13 @@ public:
     }
 
     void pop_back() {
-        if(size_ > 0)
-            size_--;
+        if (size_ <= 0)
+            throw std::out_of_range("out of range");
+
+        size_--;
+        data_[size_] = T();
     }
+
 
     void clear() {
         size_ = 0;        
@@ -67,7 +73,7 @@ public:
 
     void reserve(size_type new_size) {
         if (new_size > capacity_){
-            pointer newData = new pointer[new_size];
+            pointer newData = new value_type[new_size];
             for(int i = 0; i < size_; i++){
                 newData[i] = std::move(data_[i]);
             }
