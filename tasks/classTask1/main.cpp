@@ -30,7 +30,7 @@
 }*/
 
 using namespace std;
-auto Split(const string& str, char delimiter) -> std::vector<std::string> 
+auto Split(const string& str, char delimiter) -> vector<string> 
 {
     vector<string> result;
     string addString;
@@ -74,9 +74,10 @@ public:
         if (f != NULL) {
             char line[100];
             while (fgets(line, sizeof(line), f) != NULL) {
-                if (strstr(line, key.c_str()) != NULL) {
+                if (strstr(line, key.c_str()) != NULL) { //Тут надо проверять по ключу у меня со сплитом не работает
+                                                        //Сделал так
                     vector<string> value = Split(line, ' ');
-                    cout << "FOUND: " << value[1];
+                    cout << "FOUND: " << value[1] << "\n";
                     fclose(f);
                     return 1;
                 }
@@ -117,10 +118,11 @@ public:
 
     int Delete(const string& key) {
         FILE* f = fopen(fileName.c_str(), "r+");
-        FILE* ftemp = fopen("dbtemp.txt", "w");
+        FILE* ftemp = fopen("db_temp.txt", "w");
         char line[100];
         while (fgets(line, sizeof(line), f) != NULL) {
-            if (strstr(line, key.c_str()) == NULL) {
+            vector<string> value = Split(line, ' ');
+            if (strcmp(value[0].c_str(), key.c_str()) == 1) {
                 fputs(line, ftemp);
             }
         }
@@ -128,7 +130,7 @@ public:
         fclose(ftemp);
 
         remove(fileName.c_str());
-        rename("dbtemp.txt", fileName.c_str());
+        rename("db_temp.txt", fileName.c_str());
         return 0;
     }
 };
