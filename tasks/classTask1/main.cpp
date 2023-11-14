@@ -16,47 +16,164 @@
  * Программа может быть неоптимальна с точки зрения вычислений, главное чтобы правильно выполнялась основная логика команд.
  */
 
-#include <deque>
 #include <vector>
 #include <string>
-#include <fstream>
 #include <iostream>
-#include <algorithm>
-#include <sstream>
 #include <map>
+#include <string.h>
+#include <unistd.h>
+#include <fstream>
+#include <sstream>
 
-namespace {
+/*namespace {
     constexpr char end_command_delimiter{'?'};
+}*/
+
+using namespace std;
+auto Split(const string& str, char delimiter) -> std::vector<std::string> 
+{
+    vector<string> result;
+    string addString;
+    for(int i = 0; i < str.size(); i++){
+        if (str[i] == delimiter || i == str.size()-1){
+            result.push_back(addString);
+            addString = "";
+        }
+        else addString += str[i];
+    }
+    return result;
 }
-
-
 class FileReader {
+public:
+    string fileName;
+    FileReader(const string& fileName) {
+        this->fileName = fileName;
+    }
 
+    int Print(const string& whatToPrint) {
+        FILE* f = fopen(fileName.c_str(), "rt");
+        if(f!=NULL){
+            char line[100];
+            while (fgets(line, sizeof(line), f) != NULL) {
+                if(strchr(line, ' ')){
+                    vector<string> value = Split(line, ' ');
+                    if (strcasecmp(whatToPrint.c_str(), "keys") == 0) {
+                        cout << value[0] << endl;
+                    } else if (strcasecmp(whatToPrint.c_str(), "values") == 0) {
+                        cout << value[1] << endl;
+                    }
+                }
+            }
+            fclose(f);
+        }
+        return 1;
+    }
+
+    int find(const string& key) {
+        FILE* f = fopen(fileName.c_str(), "rt");
+        if (f != NULL) {
+            char line[100];
+            while (fgets(line, sizeof(line), f) != NULL) {
+                if (strstr(line, key.c_str()) != NULL) {
+                    vector<string> value = Split(line, ' ');
+                    cout << "FOUND: " << value[1];
+                    fclose(f);
+                    return 1;
+                }
+            }
+            fclose(f);
+            cout << "NOT FOUND\n";
+            return 2;
+        } else {
+            cout << "Не удалось открыть файл\n";
+            return 0;
+        }
+    }
 };
 
 class FileWriter {
+public:
+    string fileName;
 
-};
+    FileWriter(const string& fileName) {
+        this->fileName = fileName;
+    }
 
-class KeyValueDB {
+    int drop() {
+        FILE* f = fopen(fileName.c_str(), "w");
+        fclose(f);
+        return 0;
+    }
 
-};
+    int insert(const string& key, const string& value) {
+        FILE* f = fopen(fileName.c_str(), "a");
+        if (f != NULL) {
+            fprintf(f, "\n%s %s", key.c_str(), value.c_str());
+            fclose(f);
+            return 1;
+        }
+        return 0;
+    }
 
-class KeyValueManager : public KeyValueDB {
+    int Delete(const string& key) {
+        FILE* f = fopen(fileName.c_str(), "r+");
+        FILE* ftemp = fopen("dbtemp.txt", "w");
+        char line[100];
+        while (fgets(line, sizeof(line), f) != NULL) {
+            if (strstr(line, key.c_str()) == NULL) {
+                fputs(line, ftemp);
+            }
+        }
+        fclose(f);
+        fclose(ftemp);
 
+        remove(fileName.c_str());
+        rename("dbtemp.txt", fileName.c_str());
+        return 0;
+    }
 };
 
 class ArgumentsParser {
+public:
+    map<string, string> commands;
+    ArgumentsParser(int argc, char** argv) {
+        for (int i = 1; i < argc; i++) {
+            if (strcmp(argv[i], "INSERT") == 0 || strcmp(argv[i], "DELETE") == 0 ||
+                strcmp(argv[i], "FIND") == 0 || strcmp(argv[i], "PRINT") == 0) {
+                commands[argv[i]] = argv[i + 1];
+                i++;
+            } else if (strcmp(argv[i], "DROPALL") == 0) {
+                commands[argv[i]] = "";
+            }
+        }
+    }
 
+    int ProcessAllCommands(string filePath ) {
+        FileWriter write(filePath);
+        FileReader read(filePath);
+        for (auto itCommands = commands.begin(); itCommands != commands.end(); itCommands++) {
+            if (itCommands->first == "INSERT") {
+                string key = itCommands->second.substr(0, itCommands->second.find('='));
+                string value = itCommands->second.substr(itCommands->second.find('=') + 1);
+                write.insert(key, value);
+            } else if (itCommands->first == "DELETE") {
+                write.Delete(itCommands->second);
+            } else if (itCommands->first == "FIND") {
+                read.find(itCommands->second);
+            } else if (itCommands->first == "PRINT") {
+                read.Print(itCommands->second);
+            } else if (itCommands->first == "DROPALL") {
+                write.drop();
+            }
+        }
+        return 1;
+    }
 };
+int main(int argc, char** argv){   
+    string fileName = "db.txt";
+    auto ap = ArgumentsParser(argc, argv);
 
-int main(int argc, char** argv)
-{
-    // auto db = KeyValueManager("db.txt");
-    // auto ap = ArgumentsParser(argc, argv);
-    
-    // // return false if no more commands
-    // while(ap.ProcessNextCommand(db)) {}
+    ap.ProcessAllCommands(fileName);
 
     return 0;
 }
