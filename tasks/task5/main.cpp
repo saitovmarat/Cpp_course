@@ -9,6 +9,7 @@
 
 // в этой функции поменять только две строчки, в условии if
 // функция должна удалить объект из heap
+//########
 template<typename T>
 void value_should_be_deleted_in_this_function(T p_value)
 {
@@ -26,9 +27,10 @@ void value_should_be_deleted_in_this_function(T p_value)
 std::shared_ptr<int> function_should_return_shared_ptr_to_any_int_5_in_heap()
 {
     static int value = 5;
-    return std::shared_ptr<int>(&value, [](int *){});
+    auto result = std::make_shared<int>(value);
+    return result;
 }
-
+//#####
 struct DeleterString
 {
     // самостоятельно реализовать недостающие детали класса
@@ -45,12 +47,13 @@ int main()
 // исправить проблемы с утечной памяти
     int* ptr = new int{20};
     std::vector<int>* vector_ptr = new std::vector<int>();
-    for (int* i = new int{0}; *i < 20; ++(*i)) {
-        vector_ptr->push_back(*ptr * *i);
+    for (int i = 0; i < 20; i++) {
+        vector_ptr->push_back(*ptr * i);
     }
+    delete[] ptr;
 
 
-// убрать проблему чтение элемента, который был удалён в векторе
+// убрать проблему чтения элемента, который был удалён в векторе
     int* ptr_to_vector_value = &(*vector_ptr)[0]; // берём указатель на 0 элемент вектора
     if (ptr_to_vector_value) {
         std::cout << "dereference [0] element of vector before clean = " << *ptr_to_vector_value << std::endl;
@@ -58,20 +61,20 @@ int main()
     vector_ptr->clear();
 // этот код не должен вызываться, т.к. элемент удалён
 // сделать так, чтобы код проверил на существование элемента
-    if (ptr_to_vector_value) {
+    if (ptr_to_vector_value && !(*vector_ptr).empty()) {
         std::cout << "dereference [0] element of vector after clean = " << *ptr_to_vector_value << std::endl;
     }
 
-
 // реализовать FileRaiiWrapper для управления FILE* по парадигме RAII
-    assert(FileRaiiWrapper("test_read.txt").ReadBytes(10) == "some text");
-    std::cout << FileRaiiWrapper("test_read.txt").ReadBytes(10) << std::endl;
+    FileRaiiWrapper f("test_read.txt");
+    assert(f.ReadBytes(10) == "some text");
+    std::cout << f.ReadBytes(10) << std::endl;
 
 
 // сделать выделение через умный указатель
-    FileRaiiWrapper* fRaiiWrapper = nullptr;
+    std::unique_ptr<FileRaiiWrapper> fRaiiWrapper = nullptr;
     try {
-        fRaiiWrapper = new FileRaiiWrapper("not_existing_filename.txt");
+        fRaiiWrapper = std::make_unique<FileRaiiWrapper>("not_existing_filename.txt");
     } catch (CannotOpenFileException) {
         std::cout << "CannotOpenFileException catched" << std::endl;
         assert(!fRaiiWrapper);
@@ -80,11 +83,13 @@ int main()
 
 // записать в файл test_write.txt данные `hello text` с использованием умных указателей для выделения памяти
 // выделение памяти так и должно остаться в куче в тех местах, где оно уже есть
-    std::vector<FILE*> vector_files;
+    std::vector<std::unique_ptr<FILE, decltype(&std::fclose)>> vector_files;
     FILE* tmpfile = std::fopen("test_write.txt", "w");
-    vector_files.push_back(tmpfile);
-    std::fputs(new char[11]{"hello text"}, vector_files[0]); 
+    vector_files.emplace_back(tmpfile, &std::fclose);
+    std::fputs("hello text", vector_files[0].get()); 
 
+
+//######
 
 // нужно внутри функции правильно удалить объект из динамической памяти
     int* some_value = new int{42};

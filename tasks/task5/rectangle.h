@@ -26,15 +26,14 @@ class Rectangle
 
 int CalculateRectArea(int l, int b)
 {
-    Rectangle *p = new Rectangle(l, b);
+    std::unique_ptr<Rectangle> p = std::make_unique<Rectangle>(l, b);
     int area = p->Area();
     return area;
 }
 
 double CalculateRectRelationsOfTheParties(int l, int b)
 {
-    Rectangle *p = new Rectangle(l, b);
+    std::unique_ptr<Rectangle> p = std::make_unique<Rectangle>(l, b); 
     double relation = p->RelationsOfTheParties();
-    delete p;
     return relation;
 }
