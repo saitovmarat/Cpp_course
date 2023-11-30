@@ -1,20 +1,20 @@
-name: Test classWork1
+name: Test task6
 
 on:
   push:
     paths:
-     - ".github/workflows/run_test_cw1.yaml"
-     - "tasks/classTask1/main.cpp"
-     - "tasks/classTask1/tests.py"
+     - ".github/workflows/run_test_hw6.yaml"
+     - "tasks/task6/main.cpp"
+     - "tasks/task6/tests.py"
   pull_request:
     paths:
-     - ".github/workflows/run_test_cw1.yaml"
-     - "tasks/classTask1/main.cpp"
-     - "tasks/classTask1/tests.py"
+     - ".github/workflows/run_test_hw6.yaml"
+     - "tasks/task6/main.cpp"
+     - "tasks/task6/tests.py"
 
 
 env:
-  TASK_DIR: ${{github.workspace}}/tasks/classTask1/
+  TASK_DIR: ${{github.workspace}}/tasks/task6/
 
 jobs:
   build:
