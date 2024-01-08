@@ -1,0 +1,7 @@
+John, Doe, 123, "The_Great_Gatsby", 300, да
+Alice, Wonderland, 456, "To_Kill_a_Mockingbird", 250, нет
+Bob, Builder, 123, "1984", 400, да
+Eve, Smith, 789, "Pride_and_Prejudice", 350, да
+Charlie, Brown, 456, "The_Catcher_in_the_Rye", 200, нет
+Angie, Tunner, 456, "1984", 400, да
+Angie, Tunner, 456, "War_and_Peace", 1000, да

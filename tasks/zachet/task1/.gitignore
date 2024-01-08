@@ -1,0 +1,5 @@
+.vscode/
+build/
+zachet_task1
+tests_run
+test_books_data.txt

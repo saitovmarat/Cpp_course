@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.8)
+project (main)
+
+set(TARGET "${CMAKE_PROJECT_NAME}")
+
+# не переусложняем, - просто с одним файлом main.cpp, - его и подключаем
+add_executable(${TARGET} main.cpp)
+
+# требуем, чтобы компилятор поддерживал c++17
+set_target_properties(
+  ${TARGET} PROPERTIES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED ON
+)
+
+
